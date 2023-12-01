@@ -7,6 +7,9 @@ canvas_height=640
 
 sg.theme('white')
 
+def process():
+    pass
+
 def get_image_from_file(image_file, first=False):
     img = Image.open(image_file)
     img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
@@ -20,7 +23,11 @@ blank_image = 'blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 
 frame1 = sg.Frame(
-    '', [], size=(640, 320)
+    '', 
+    [
+        [ sg.Submit(button_text='OCR開始', font=('Helvetica',24),size=(8,3),key='process') ]
+    ]
+    , size=(640, 320)
 )
 frame2 = sg.Frame(
     '',
