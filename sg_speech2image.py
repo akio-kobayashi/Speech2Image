@@ -75,7 +75,7 @@ def get_image_from_file(image_file, first=False):
 
 blank_image = './blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
-asr_progress_elem = sg.Text(key='text1')
+asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
 
 frame1 = sg.Frame(
     '', 
