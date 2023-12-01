@@ -120,6 +120,7 @@ while True:
         asr_progress_elem.update('録音終了')
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
+        print(asr_result)
         asr_result_elem.update(asr_result)
         window['start_asr'].update(disabled=False)
 
