@@ -73,10 +73,10 @@ def record_audio():
 
 def process(event):
     entry1.delete(0, tkinter.END)
-    entry1.insert(tkinter.END, f"パソコンのマイクに向かって{second}秒話してください...")
+    entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
     record_audio()
     entry1.delete(0, tkinter.END)
-    entry1.insert(tkinter.END, f"録音終了")
+    entry1.insert(tkinter.END, "録音終了")
 
 # ウィンドウ
 window.geometry(window_geometory)
@@ -95,7 +95,6 @@ entry1.delete(0, tkinter.END)
 label2.pack(pady=10)
 entry2.pack(pady=10)
 entry2.delete(0, tkinter.END)
-#entry2.insert(tkinter.END, f"パソコンのマイクに向かって{second}秒話してください...")
 
 # 描画キャンバス
 label3.pack(pady=10)
