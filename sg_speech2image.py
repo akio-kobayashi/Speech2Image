@@ -27,7 +27,8 @@ image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 frame1 = sg.Frame(
     '', 
     [
-        [ sg.Submit(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3),key='process') ]
+        [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3), key='start_asr') ],
+        [ sg.Text(key='text1')]
     ]
     , size=(640, 320)
 )
@@ -51,5 +52,8 @@ while True:
     if event is None:
         print('exit')
         break
+    elif event == 'start_asr':
+        window['start_asr'].update(diabled=True)
+        print('Start Whisper ASR')
 
 window.close()
