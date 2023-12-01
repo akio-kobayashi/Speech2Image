@@ -1,16 +1,20 @@
 import PySimpleGUI as sg
 from PIL import Image, ImageTk
+import io
 
 canvas_width=640
 canvas_height=640
 
 sg.theme('white')
 
-def get_image_from_file(image_file):
+def get_image_from_file(image_file, first=False):
     img = Image.open(image_file)
     img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
-    img = ImageTk.PhotoImage(img)
-    return img
+    if first:
+        bio = io.BytesIO()
+        img.save(bio, format='PNG')
+        return img
+    return ImageTk.PhotoImage(img)
 
 blank_image = 'blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image))
