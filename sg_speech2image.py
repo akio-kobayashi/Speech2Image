@@ -17,7 +17,7 @@ def get_image_from_file(image_file, first=False):
     return ImageTk.PhotoImage(img)
 
 blank_image = 'blank.png'
-image_elem = sg.Image(data=get_image_from_file(blank_image))
+image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 
 frame1 = sg.Frame(
     '', [], size=(640, 320)
