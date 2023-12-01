@@ -142,10 +142,10 @@ while True:
         plt.savefig('wave.png')
         wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
         # spectrogram
-        plt.plot.specgram(y.numpy())
+        plt.specgram(y.numpy())
         plt.savefig('spec.png')
         spectrogram_elem.update(data=get_image_from_file('spec.png', height=320, first=True))
-                
+
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
