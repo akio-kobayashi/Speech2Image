@@ -25,7 +25,8 @@ frame1 = sg.Frame(
 frame2 = sg.Frame(
     '',
     [ 
-    [ image_elem ], 
+        [ sg.Text('生成画像'), font=('Helvetica', 24)],
+        [ image_elem ], 
     ],
     size=(canvas_width, canvas_height)
 )
