@@ -15,6 +15,7 @@ generate_file="test.png"
 audio_file="audio.wav"
 second=5
 command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack_Solo-00.analog-stereo', 'audio.wav']
+asr_result=""
 
 def _execute_shell_command(
     command,
@@ -54,13 +55,16 @@ def prepare_whisper():
 def record_audio():
     _execute_shell_command(command, second)
 
-canvas_width=640
-canvas_height=640
+def asr(model):
+    result = model.transcribe(audio_file, language='ja')
+    asr_result=list(result['text'])    
+
+model = prepare_whisper()
+
+canvas_width=1280
+canvas_height=1280
 
 sg.theme('LightGrey')
-
-def process():
-    pass
 
 def get_image_from_file(image_file, first=False):
     img = Image.open(image_file)
@@ -75,15 +79,18 @@ def get_image_from_file(image_file, first=False):
 
 blank_image = './blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
-asr_progress_elem = sg.Multiline('', key='text1', font=('Helvetica', 24))
+asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
+asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 24))
 
 frame1 = sg.Frame(
     '', 
     [
         [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3), key='start_asr') ],
-        [ asr_progress_elem ]
+        [ asr_progress_elem ],
+        [ sg.Text('音声認識結果', font=('Helvetica', 24))],
+        [ asr_result_elem ]
     ]
-    , size=(640, 320)
+    , size=(1280, 320)
 )
 frame2 = sg.Frame(
     '',
@@ -111,6 +118,9 @@ while True:
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
         asr_progress_elem.update('録音終了')
+        window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
+    elif event == 'complete_asr':
+        asr_result_elem.update(asr_result)
         window['start_asr'].update(disabled=False)
 
 window.close()
