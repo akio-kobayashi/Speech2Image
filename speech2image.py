@@ -1,53 +1,22 @@
-#-*- coding: utf8 -*-
-import tkinter
+import PySimpleGUI as sg
 from PIL import Image, ImageTk
+import io
 import wave, subprocess
-import torch
+import torch, torchaudio
 from diffusers import DiffusionPipeline
 import xformers
 import whisper
 import os, time, ffmpeg, numpy
+import matplotlib.pyplot as plt
 
-class ModifiedEntry(tkinter.Entry):
-    def __init__(self, *args, **kwargs):
-        tkinter.Entry.__init__(self, *args, **kwargs)
-        self.sv = tkinter.StringVar()
-        self.sv.trace('w',self.var_changed)
-        self.configure(textvariable = self.sv)
-        self.activate_event=True
-
-    # argsにはtrace発生元のVarの_nameが入っている
-    # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。
-    def var_changed(self, *args):
-        if args[0] == self.sv._name and self.activate_event:
-            s = self.sv.get() 
-            self.event_generate("<<TextModified>>")
-
-    def set_activate_event(self, actv):
-        self.activate_event=actv
-
-    def get_activate_event(self):
-        return self.activate_event
-    
-window_geometory="1024x768"
-canvas_width=640
-canvas_height=480
+# configuration
 model_id="stabilityai/japanese-stable-diffusion-xl"
 whisper_model="large"
-image_file="test.png"
+generate_file="test.png"
 audio_file="audio.wav"
 second=5
 command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack_Solo-00.analog-stereo', 'audio.wav']
-
-# ウィジェットパーツ
-window = tkinter.Tk()
-button = tkinter.Button(text=u'音声認識', width=100, font=("Helvetica", 24),bg="RosyBrown1" )
-entry1 = ModifiedEntry(width=200, font=("Helvetica", 24), bg="white" )
-label2 = tkinter.Label(window, text='音声認識結果', font=("Helvetica", 24), bg="white" )
-entry2 = ModifiedEntry(width=200, font=("Helvetica", 24), bg="white" )
-label3 = tkinter.Label(window, text='Stable Diffusion', font=("Helvetica", 24), bg="white" )
-entry3 = ModifiedEntry(width=200, font=("Helvetica", 24), bg="white")
-canvas = tkinter.Canvas(window, bg="white", height=canvas_height, width=canvas_width)
+asr_result=""
 
 def _execute_shell_command(
     command,
@@ -84,75 +53,118 @@ def prepare_whisper():
     model = whisper.load_model(whisper_model).to("cpu")
     return model
 
-def draw_image():
-    img = Image.open(image_file)
-    img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
-    img = ImageTk.PhotoImage(img)
-    canvas.create_image(0, 0, image=img, anchor=tkinter.NW)
-
 def record_audio():
     _execute_shell_command(command, second)
 
-def process1(event):
-    entry1.set_activate_event(False)
-    entry1.delete(0, tkinter.END)
-    button["state"] = tkinter.DISABLED
-    entry1.set_activate_event(True)
-    entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
+def asr(model):
+    result = model.transcribe(audio_file, language='ja')
+    asr_result=list(result['text'])    
 
-def process2(event):
-    record_audio()
-    entry1.set_activate_event(False)
-    entry1.delete(0, tkinter.END)
-    entry1.insert(tkinter.END, "録音終了")
-    entry1.set_activate_event(True)
-    entry2.delete(0, tkinter.END)
+def stable_diffusion():
+    image = pipeline(asr_result).images[0]
+    image.save(generate_file)
 
-def process3(event):
-    entry3.set_activate_event(False)
-    entry3.delete(0, tkinter.END)
-    entry3.set_activate_event(True)
-    entry3.insert(tkinter.END, "描画中...")
+model = prepare_whisper()
+pipeline = prepare_pipeline()
 
-def process4(event):
-    time.sleep(5)
-    button["state"] = tkinter.NORMAL
-    entry3.set_activate_event(False)
-    entry3.delete(0, tkinter.END)
-    entry3.insert(tkinter.END, "描画終了")
-    entry3.set_activate_event(True)
+canvas_width=1280
+canvas_height=1280
 
-# ウィンドウ
-window.geometry(window_geometory)
-window.title("Stable Diffusion w/ Whisper in Japanese")
-window.configure(bg="white")
+sg.theme('LightGrey')
 
-# 音声認識ボタン
-button.bind("<Button-1>", process1)
-button.pack(pady=10)
+def speech_analysis():
+    y, sr = torchaudio.load(audio_file)
+    plt.figure(figsize=(16,6))
+    plt.plot(y.numpy(), linewidth=1)
+    plt.savefig('wave.png')
+    # spectrogram
+    plt.specgram(y.numpy())
+    plt.savefig('spec.png')
 
-# 進行状況
-entry1.pack(pady=10)
-entry1.delete(0, tkinter.END)
-entry1.bind("<<TextModified>>", process2)
+def get_image_from_file(image_file, width=canvas_width, height=canvas_height, first=False):
+    img = Image.open(image_file)
+    #img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
+    img.thumbnail((width, height))
+    if first:
+        bio = io.BytesIO()
+        img.save(bio, format='PNG')
+        del img
+        return bio.getvalue()
+    return ImageTk.PhotoImage(img)
 
-# 音声認識結果
-label2.pack(pady=10)
-entry2.pack(pady=10)
-entry2.delete(0, tkinter.END)
-entry2.bind("<<TextModified>>", process3)
+blank_image = './blank.png'
+image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
+asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
+asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 24))
+wave_elem = sg.Image(data=get_image_from_file(blank_image, height=480, first=True))
+spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=480, first=True))
 
-# 描画キャンバス
-label3.pack(pady=10)
-entry3.pack(pady=10)
-entry3.delete(0, tkinter.END)
-entry3.bind("<<TextModified>>", process4)
-canvas.pack(pady=10)
-#canvas.place(x=0, y=0)
+frame1 = sg.Frame(
+    '', 
+    [
+        [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3), key='start_asr'), asr_progress_elem ],
+        [ sg.Text('音声認識結果: ', font=('Helvetica', 24)), asr_result_elem]
+    ]
+    , size=(2560, 320)
+)
+frame2 = sg.Frame(
+    '',
+    [ 
+        [ sg.Text('生成画像', font=('Helvetica', 24))],
+        [ image_elem ], 
+    ],
+    size=(canvas_width, canvas_height)
+)
 
-#pipeline = prepare_pipeline()
-#model = prepare_whisper()
+frame3 = sg.Frame(
+    '',
+    [
+        [sg.Text('音声波形', font=('Helvetica, 24'))],
+        [ wave_elem ],
+        [ sg.Text('スペクトログラム（声紋）', font=('Helvetica', 24)) ],
+        [ spectrogram_elem ]        
+    ],
+    size=(canvas_width, canvas_height)
+)
 
-window.mainloop()
+layout = [ 
+    [frame1],
+    [frame2, frame3]
+]
+window = sg.Window('サンプル', layout, resizable=True)
 
+while True:
+    event, values = window.read()
+    if event is None:
+        print('exit')
+        break
+    elif event == 'start_asr':
+        window['start_asr'].update(disabled=True)
+        asr_result_elem.update('')
+        wave_elem.update(data=get_image_from_file(blank_image, height=480, first=True))
+        spectrogram_elem.update(data=get_image_from_file(blank_image, height=480, first=True))
+        image_elem.update(data=get_image_from_file(blank_image, first=True))
+        asr_progress_elem.update('パソコンのマイクに向かって5秒話してください...')
+        window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
+    elif event == 'complete_record':
+        asr_progress_elem.update('録音終了')
+        window.perform_long_operation(lambda:speech_analysis(), end_key="complete_analysis")
+        window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
+        asr_progress_elem.update('音声認識中...')
+    elif event == 'complete_analysis':    
+        wave_elem.update(data=get_image_from_file('wave.png', height=480, first=True))
+        spectrogram_elem.update(data=get_image_from_file('spec.png', height=480, first=True))
+    elif event == 'complete_asr':
+        asr_progress_elem.update('音声認識終了')
+        if asr_result == '':
+            asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
+        asr_result_elem.update(asr_result)
+        asr_progress_elem.update('画像生成中...')
+        window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
+    elif event == 'complete_stable_diffusion':
+        image_elem.update(data=get_image_from_file(generate_file, first=True))
+        asr_progress_elem.update('画像生成終了')
+        window['start_asr'].update(disabled=False)
 
+window.close()
+exit(0)
