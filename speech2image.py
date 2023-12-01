@@ -21,11 +21,11 @@ command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack
 # ウィジェットパーツ
 window = tkinter.Tk()
 button = tkinter.Button(text=u'音声認識', width=100, font=("Helvetica", 24),bg="RosyBrown1" )
-text1 = tkinter.Text(width=200, font=("Helvetica", 24), bg="white" )
+entry1 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
 label2 = tkinter.Label(window, text='音声認識結果', font=("Helvetica", 24), bg="white" )
-text2 = tkinter.Text(width=200, font=("Helvetica", 24), bg="white" )
+entry2 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
 label3 = tkinter.Label(window, text='Stable Diffusion', font=("Helvetica", 24), bg="white" )
-text3 = tkinter.Text(width=200, font=("Helvetica", 24), bg="white")
+entry3 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white")
 canvas = tkinter.Canvas(window, bg="white", height=canvas_height, width=canvas_width)
 
 def _execute_shell_command(
@@ -73,27 +73,27 @@ def record_audio():
     _execute_shell_command(command, second)
 
 def process1(event):
-    text1.delete(0, tkinter.END)
-    text1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
+    entry1.delete(0, tkinter.END)
+    entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
     button["state"] = tkinter.DISABLED
     window.event_generate("<<RecordEndEvent>>")
 
 
 def process2(event):
     record_audio()
-    text1.delete(0, tkinter.END)
-    text1.insert(tkinter.END, "録音終了")
+    entry1.delete(0, tkinter.END)
+    entry1.insert(tkinter.END, "録音終了")
     window.event_generate("<<DiffusionStartEvent>>")
 
 def process3(event):
-    text3.delete(0, tkinter.END)
-    text3.insert(tkinter.END, "描画中...")
+    entry3.delete(0, tkinter.END)
+    entry3.insert(tkinter.END, "描画中...")
     time.sleep(5)
     button["state"] = tkinter.NORMAL
 
 def process4(event):
-    text3.delete(0, tkinter.END)
-    text3.insert(tkinter.END, "描画終了")
+    entry3.delete(0, tkinter.END)
+    entry3.insert(tkinter.END, "描画終了")
 
 # ウィンドウ
 window.geometry(window_geometory)
@@ -108,23 +108,22 @@ window.event_add("<<DiffusionStartEvent>>", "<ButtonRelease>")
 button.bind("<<RecordEndEvent>>", process2, '+')
 button.bind("<<DiffusionStartEvent>>", process3, '+')
 #button.bind("<<DiffusionEndEvent>>", process4, '+')
-text1.bind("<Key>", process4)
 
 button.pack(pady=10)
 
 # 進行状況
-text1.pack(pady=10)
-text1.delete(0, tkinter.END)
-
+entry1.pack(pady=10)
+entry1.delete(0, tkinter.END)
+entry1.bind("<Key>", process4)
 # 音声認識結果
 label2.pack(pady=10)
-text2.pack(pady=10)
-text2.delete(0, tkinter.END)
+entry2.pack(pady=10)
+entry2.delete(0, tkinter.END)
 
 # 描画キャンバス
 label3.pack(pady=10)
-text3.pack(pady=10)
-text3.delete(0, tkinter.END)
+entry3.pack(pady=10)
+entry3.delete(0, tkinter.END)
 canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
