@@ -103,6 +103,9 @@ window.configure(bg="white")
 
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
+window.event_add("<RecordEndEvent>", "<Button-1>")
+window.event_add("<DiffusionStartEvent>", "<RecordEndEvent>")
+window.event_add("<DiffusionEndEvent>", "<DiffusionStartEvent>")
 button.bind("<RecordEndEvent>", process2, '+')
 button.bind("<DiffusionStartEvent>", process3, '+')
 button.bind("<DiffusionEndEvent>", process4, '+')
