@@ -27,7 +27,7 @@ image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 frame1 = sg.Frame(
     '', 
     [
-        [ sg.Submit(button_text='音声認識', font=('Helvetica',24),size=(8,3),key='process') ]
+        [ sg.Submit(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3),key='process') ]
     ]
     , size=(640, 320)
 )
