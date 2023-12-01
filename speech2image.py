@@ -10,7 +10,7 @@ window = tkinter.Tk()
 window.geometry(window_geometory)
 window.title("画像表示:"+version)
 
-canvas = tkinter.Canvas(window, bg="deb887", height=canvas_height, width=canvas_width)
+canvas = tkinter.Canvas(window, bg="#fff", height=canvas_height, width=canvas_width)
 canvas.place(x=0, y=0)
 
 #img = tkinter.PhotoImage(file='test.png', width=200, height=200)
