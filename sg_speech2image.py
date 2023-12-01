@@ -8,6 +8,7 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 import librosa
+imoort librosa.display
 import matplotlib.pyplot as plt
 
 # configuration
@@ -138,7 +139,7 @@ while True:
         asr_progress_elem.update('録音終了')
         y, sr = librosa.load(audio_file)
         plt.figure(figsize=(16,6))
-        librosa.display.waveplot(y=y, sr=sr)
+        librosa.display.waveshow(y=y, sr=sr)
         plt.savefig('wave.png')
         wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
