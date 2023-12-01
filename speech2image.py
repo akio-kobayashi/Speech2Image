@@ -76,7 +76,7 @@ def process1(event):
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
     button["state"] = tkinter.DISABLED
-    window.event_generate("<RecordEndEvent>")
+    window.event_generate("<<RecordEndEvent>>")
 
 
 def process2(event):
@@ -103,7 +103,7 @@ window.configure(bg="white")
 
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
-window.event_add("<RecordEndEvent>", "<Button-1>")
+window.event_add("<<RecordEndEvent>>", "<Button-1>")
 window.event_add("<DiffusionStartEvent>", "<RecordEndEvent>")
 window.event_add("<DiffusionEndEvent>", "<DiffusionStartEvent>")
 button.bind("<RecordEndEvent>", process2, '+')
