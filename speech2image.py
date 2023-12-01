@@ -74,7 +74,7 @@ def record_audio():
 def process(event):
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
-    time.spee(1)
+    time.sleep(1)
     record_audio()
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "録音終了")
