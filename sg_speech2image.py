@@ -53,7 +53,7 @@ while True:
         print('exit')
         break
     elif event == 'start_asr':
-        window['start_asr'].update(diabled=True)
+        window['start_asr'].update(disabled=True)
         print('Start Whisper ASR')
 
 window.close()
