@@ -43,5 +43,3 @@ def prepare_pipeline():
 def prepare_whisper():
     model = whisper.load_model(whisper_model).to("cpu")
     return model
-
-def speech2image():
