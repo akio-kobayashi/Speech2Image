@@ -8,6 +8,7 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 import librosa
+import matplotlib as plt
 
 # configuration
 model_id="stabilityai/japanese-stable-diffusion-xl"
@@ -135,6 +136,11 @@ while True:
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
         asr_progress_elem.update('録音終了')
+        y, sr = librosa.load(audio_file)
+        plt.figure(figsize=(16,6))
+        librosa.display.waveplot(y=y, sr=sr)
+        plt.savefig('wave.png')
+        wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
