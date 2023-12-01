@@ -10,8 +10,8 @@ import os, time, ffmpeg, numpy
 
 class ModifiedEntry(tkinter.Entry):
     def __init__(self, *args, **kwargs):
-        tk.Entry.__init__(self, *args, **kwargs)
-        self.sv = tk.StringVar()
+        tkinter.Entry.__init__(self, *args, **kwargs)
+        self.sv = tkinter.StringVar()
         self.sv.trace('w',self.var_changed)
         self.configure(textvariable = self.sv)
 
