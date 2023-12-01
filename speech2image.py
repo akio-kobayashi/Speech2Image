@@ -71,21 +71,26 @@ def draw_image():
 def record_audio():
     _execute_shell_command(command, second)
 
-def process(event):
+def process1(event):
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
-    time.sleep(1)
+    button["state"] = tkinter.DISABLED
+
+
+def process2(event):
     record_audio()
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "録音終了")
-
+    button["state"] = tkinter.NORMAL
+    
 # ウィンドウ
 window.geometry(window_geometory)
 window.title("Stable Diffusion w/ Whisper in Japanese")
 window.configure(bg="white")
 
 # 音声認識ボタン
-button.bind("<Button-1>", process)
+button.bind("<Button-1>", process1)
+button.bind("<ButtonRelease>", process2, '+')
 button.pack(pady=10)
 
 # 進行状況
