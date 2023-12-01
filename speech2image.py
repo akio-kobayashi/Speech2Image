@@ -89,12 +89,11 @@ def process3(event):
     entry3.delete(0, tkinter.END)
     entry3.insert(tkinter.END, "描画中...")
     time.sleep(5)
-    window.event_generate("<<DiffusionEndEvent>>")
+    button["state"] = tkinter.NORMAL
 
 def process4(event):
     entry3.delete(0, tkinter.END)
     entry3.insert(tkinter.END, "描画終了")
-    button["state"] = tkinter.NORMAL
 
 # ウィンドウ
 window.geometry(window_geometory)
@@ -104,11 +103,11 @@ window.configure(bg="white")
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
 window.event_add("<<RecordEndEvent>>", "<Button-1>")
-window.event_add("<<DiffusionStartEvent>>", "<Button-1>")
-window.event_add("<<DiffusionEndEvent>>", "<Button-1>")
+window.event_add("<<DiffusionStartEvent>>", "<ButtonRelease>")
+#window.event_add("<<DiffusionEndEvent>>", "<Button-1>")
 button.bind("<<RecordEndEvent>>", process2, '+')
 button.bind("<<DiffusionStartEvent>>", process3, '+')
-button.bind("<<DiffusionEndEvent>>", process4, '+')
+#button.bind("<<DiffusionEndEvent>>", process4, '+')
 
 button.pack(pady=10)
 
