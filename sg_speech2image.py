@@ -7,6 +7,7 @@ from diffusers import DiffusionPipeline
 import xformers
 import whisper
 import os, time, ffmpeg, numpy
+import librosa
 
 # configuration
 model_id="stabilityai/japanese-stable-diffusion-xl"
@@ -71,10 +72,10 @@ canvas_height=1280
 
 sg.theme('LightGrey')
 
-def get_image_from_file(image_file, first=False):
+def get_image_from_file(image_file, width=canvas_width, height=canvas_height, first=False):
     img = Image.open(image_file)
     #img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
-    img.thumbnail((canvas_width, canvas_height))
+    img.thumbnail((width, height))
     if first:
         bio = io.BytesIO()
         img.save(bio, format='PNG')
@@ -86,16 +87,16 @@ blank_image = './blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
 asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 24))
+wave_elem = sg.Image(data=get_image_from_file(blank_image, height=320, first=True))
+spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=320, first=True))
 
 frame1 = sg.Frame(
     '', 
     [
-        [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3), key='start_asr') ],
-        [ asr_progress_elem ],
-        [ sg.Text('音声認識結果', font=('Helvetica', 24))],
-        [ asr_result_elem ]
+        [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3), key='start_asr'), asr_progress_elem ],
+        [ sg.Text('音声認識結果: ', font=('Helvetica', 24)), asr_result_elem]
     ]
-    , size=(1280, 320)
+    , size=(2560, 320)
 )
 frame2 = sg.Frame(
     '',
@@ -106,9 +107,20 @@ frame2 = sg.Frame(
     size=(canvas_width, canvas_height)
 )
 
+frame3 = sg.Frame(
+    '',
+    [
+        [sg.Text('音声波形', font=('Helvetica, 24'))],
+        [ wave_elem ],
+        [ sg.Text('スペクトログラム（声紋）', font=('Helvetica', 24)) ],
+        [ spectrogram_elem ]        
+    ],
+    size=(canvas_width, canvas_height)
+)
+
 layout = [ 
     [frame1],
-    [frame2]
+    [frame2, frame3]
 ]
 window = sg.Window('サンプル', layout, resizable=True)
 
