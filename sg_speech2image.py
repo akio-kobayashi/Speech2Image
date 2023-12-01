@@ -4,6 +4,8 @@ from PIL import Image, ImageTk
 canvas_width=640
 canvas_height=640
 
+sg.theme('white')
+
 def get_image_from_file(image_file):
     img = Image.open(image_file)
     img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
@@ -13,7 +15,6 @@ def get_image_from_file(image_file):
 blank_image = 'blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image))
 
-sg.theme('white')
 frame1 = sg.Frame(
     '', [], size=(640, 320)
 )
