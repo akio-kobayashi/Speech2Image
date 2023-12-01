@@ -72,7 +72,7 @@ window.geometry(window_geometory)
 window.title("Stable Diffusion w/ Whisper in Japanese")
 
 # 音声認識ボタン
-button = tkinter.Button(text=u'音声認識', width=200, font=("Helvetica", 24) )
+button = tkinter.Button(text=u'音声認識', width=100, height=50, font=("Helvetica", 24),bg="RosyBrown1" )
 button.bind("<Button-1>", process)
 button.pack(pady=10)
 
@@ -93,7 +93,7 @@ entry2.delete(0, tkinter.END)
 # 描画キャンバス
 label3 = tkinter.Label(window, text='描画結果', font=("Helvetica", 24) )
 label3.pack(pady=10)
-canvas = tkinter.Canvas(window, bg="#fff", height=canvas_height, width=canvas_width)
+canvas = tkinter.Canvas(window, bg="white", height=canvas_height, width=canvas_width)
 canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
