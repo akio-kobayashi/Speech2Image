@@ -141,6 +141,9 @@ while True:
     elif event == 'start_asr':
         window['start_asr'].update(disabled=True)
         asr_result_elem.update('')
+        wave_elem.update(data=get_image_from_file(blank_image, height=480, first=True))
+        spectrogram_elem.update(data=get_image_from_file(blank_image, height=480, first=True))
+        image_elem.update(data=get_image_from_file(blank_image, first=True))
         asr_progress_elem.update('パソコンのマイクに向かって5秒話してください...')
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
