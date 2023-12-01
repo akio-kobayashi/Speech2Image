@@ -96,8 +96,8 @@ blank_image = './blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
 asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 24))
-wave_elem = sg.Image(data=get_image_from_file(blank_image, height=320, first=True))
-spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=320, first=True))
+wave_elem = sg.Image(data=get_image_from_file(blank_image, height=640, first=True))
+spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=640, first=True))
 
 frame1 = sg.Frame(
     '', 
@@ -140,22 +140,24 @@ while True:
         break
     elif event == 'start_asr':
         window['start_asr'].update(disabled=True)
+        asr_result_elem.update('')
         asr_progress_elem.update('パソコンのマイクに向かって5秒話してください...')
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
         asr_progress_elem.update('録音終了')
         window.perform_long_operation(lambda:speech_analysis(), end_key="complete_analysis")
-        asr_progress_elem.update('音声分析中')
+        asr_progress_elem.update('音声分析中...')
     elif event == 'complete_analysis':    
         wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
         spectrogram_elem.update(data=get_image_from_file('spec.png', height=320, first=True))
-        asr_progress_elem.update('音声認識中')
+        asr_progress_elem.update('音声認識中...')
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
         if asr_result == '':
             asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
         asr_result_elem.update(asr_result)
+        asr_progress_elem.update('画像生成中...')
         window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
     elif event == 'complete_stable_diffusion':
         image_elem.update(data=get_image_from_file(generate_file, first=True))
@@ -163,3 +165,4 @@ while True:
         window['start_asr'].update(disabled=False)
 
 window.close()
+exit(0)
