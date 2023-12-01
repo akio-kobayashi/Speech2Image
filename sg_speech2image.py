@@ -2,10 +2,10 @@ import PySimpleGUI as sg
 
 sg.theme('white')
 frame1 = sg.Frame(
-    [], size=(640, 320)
+    '', [], size=(640, 320)
 )
 frame2 = sg.Frame(
-    [], size=(640, 320)
+    '', [], size=(640, 320)
 )
 
 layout = [ 
