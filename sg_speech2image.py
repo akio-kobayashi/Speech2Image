@@ -2,7 +2,7 @@ import PySimpleGUI as sg
 from PIL import Image, ImageTk
 
 canvas_width=640
-canvas_height=480
+canvas_height=640
 
 def get_image_from_file(image_file):
     img = Image.open(image_file)
