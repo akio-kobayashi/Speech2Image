@@ -8,7 +8,7 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 import librosa
-imoort librosa.display
+import librosa.display
 import matplotlib.pyplot as plt
 
 # configuration
