@@ -24,7 +24,8 @@ button = tkinter.Button(text=u'音声認識', width=100, font=("Helvetica", 24),
 entry1 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
 label2 = tkinter.Label(window, text='音声認識結果', font=("Helvetica", 24), bg="white" )
 entry2 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
-label3 = tkinter.Label(window, text='描画結果', font=("Helvetica", 24), bg="white" )
+label3 = tkinter.Label(window, text='Stable Diffusion', font=("Helvetica", 24), bg="white" )
+entry3 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white")
 canvas = tkinter.Canvas(window, bg="white", height=canvas_height, width=canvas_width)
 
 def _execute_shell_command(
@@ -75,14 +76,26 @@ def process1(event):
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
     button["state"] = tkinter.DISABLED
+    window.event_generate("<RecordEndEvent>")
 
 
 def process2(event):
     record_audio()
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "録音終了")
+    window.event_generate("<DiffusionStartEvent>")
+
+def process3(event):
+    entry3.delete(0, tkinter.END)
+    entry3.insert(tkinter.END, "描画中...")
+    time.sleep(5)
+    window.event_generate("<DiffusionEndEvent>")
+
+def process4(event):
+    entry3.delete(0, tkinter.END)
+    entry3.insert(tkinter.END, "描画終了")
     button["state"] = tkinter.NORMAL
-    
+
 # ウィンドウ
 window.geometry(window_geometory)
 window.title("Stable Diffusion w/ Whisper in Japanese")
@@ -90,7 +103,10 @@ window.configure(bg="white")
 
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
-button.bind("<ButtonRelease>", process2, '+')
+button.bind("<RecordEndEvent>", process2, '+')
+button.bind("<DiffusionStartEvent>", process3, '+')
+button.bind("<DiffusionEndEvent>", process4, '+')
+
 button.pack(pady=10)
 
 # 進行状況
@@ -104,6 +120,8 @@ entry2.delete(0, tkinter.END)
 
 # 描画キャンバス
 label3.pack(pady=10)
+entry3.pack(pady=10)
+entry3.delete(0, tkinter.END)
 canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
