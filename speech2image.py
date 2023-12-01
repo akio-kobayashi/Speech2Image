@@ -83,13 +83,13 @@ def process2(event):
     record_audio()
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "録音終了")
-    window.event_generate("<DiffusionStartEvent>")
+    window.event_generate("<<DiffusionStartEvent>>")
 
 def process3(event):
     entry3.delete(0, tkinter.END)
     entry3.insert(tkinter.END, "描画中...")
     time.sleep(5)
-    window.event_generate("<DiffusionEndEvent>")
+    window.event_generate("<<DiffusionEndEvent>>")
 
 def process4(event):
     entry3.delete(0, tkinter.END)
@@ -104,11 +104,11 @@ window.configure(bg="white")
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
 window.event_add("<<RecordEndEvent>>", "<Button-1>")
-window.event_add("<DiffusionStartEvent>", "<RecordEndEvent>")
-window.event_add("<DiffusionEndEvent>", "<DiffusionStartEvent>")
-button.bind("<RecordEndEvent>", process2, '+')
-button.bind("<DiffusionStartEvent>", process3, '+')
-button.bind("<DiffusionEndEvent>", process4, '+')
+window.event_add("<<DiffusionStartEvent>>", "<<RecordEndEvent>>")
+window.event_add("<<DiffusionEndEvent>>", "<<DiffusionStartEvent>>")
+button.bind("<<RecordEndEvent>>", process2, '+')
+button.bind("<<DiffusionStartEvent>>", process3, '+')
+button.bind("<<DiffusionEndEvent>>", process4, '+')
 
 button.pack(pady=10)
 
