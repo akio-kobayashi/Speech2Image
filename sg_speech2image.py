@@ -23,8 +23,10 @@ frame1 = sg.Frame(
     '', [], size=(640, 320)
 )
 frame2 = sg.Frame(
-    '', 
+    '',
+    [ 
     [ image_elem ], 
+    ],
     size=(canvas_width, canvas_height)
 )
 
