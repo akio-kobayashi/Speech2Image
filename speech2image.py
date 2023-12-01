@@ -15,8 +15,8 @@ canvas.place(x=0, y=0)
 
 #img = tkinter.PhotoImage(file='test.png', width=200, height=200)
 img = Image.open('test.png')
-img = ImageTk.PhotoImage(img)
 img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
+img = ImageTk.PhotoImage(img)
 
 canvas.create_image(0, 0, image=img, anchor=tkinter.NW)
 
