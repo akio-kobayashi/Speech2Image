@@ -8,6 +8,7 @@ def get_image_from_file(image_file):
     img = Image.open(image_file)
     img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
     img = ImageTk.PhotoImage(img)
+    return img
 
 blank_image = 'blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image))
