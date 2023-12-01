@@ -108,8 +108,8 @@ while True:
     elif event == 'start_asr':
         window['start_asr'].update(disabled=True)
         asr_progress_elem.update('パソコンのマイクに向かって5秒話してください...')
-        record_audio()
-        print('Start Whisper ASR')
+        window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
+    elif event == 'complete_record':
         asr_progress_elem.update('録音終了')
         window['start_asr'].update(disabled=False)
 
