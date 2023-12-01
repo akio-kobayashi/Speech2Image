@@ -135,11 +135,17 @@ while True:
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
         asr_progress_elem.update('録音終了')
+        # waveform
         y, sr = torchaudio.load(audio_file)
         plt.figure(figsize=(16,6))
         plt.plot(y.numpy(), linewidth=1)
         plt.savefig('wave.png')
         wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
+        # spectrogram
+        plt.plot.specgram(y.numpy())
+        plt.savefig('spec.png')
+        spectrogram_elem.update(data=get_image_from_file('spec.png', height=320, first=True))
+                
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
