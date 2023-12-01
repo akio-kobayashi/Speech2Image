@@ -14,14 +14,21 @@ class ModifiedEntry(tkinter.Entry):
         self.sv = tkinter.StringVar()
         self.sv.trace('w',self.var_changed)
         self.configure(textvariable = self.sv)
+        self.activate_event=True
 
     # argsにはtrace発生元のVarの_nameが入っている
     # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。
     def var_changed(self, *args):
-        if args[0] == self.sv._name:
+        if args[0] == self.sv._name and self.activate_event:
             s = self.sv.get() 
             self.event_generate("<<TextModified>>")
 
+    def set_activate_event(self, actv):
+        self.activate_event=actv
+
+    def get_activate_event(self):
+        return self.activate_event
+    
 window_geometory="1024x768"
 canvas_width=640
 canvas_height=480
@@ -87,24 +94,33 @@ def record_audio():
     _execute_shell_command(command, second)
 
 def process1(event):
+    entry1.set_activate_event(False)
     entry1.delete(0, tkinter.END)
     button["state"] = tkinter.DISABLED
+    entry1.set_activate_event(True)
     entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
 
 def process2(event):
     record_audio()
+    entry1.set_activate_event(False)
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "録音終了")
+    entry1.set_activate_event(True)
+    entry2.delete(0, tkinter.END)
 
 def process3(event):
+    entry3.set_activate_event(False)
     entry3.delete(0, tkinter.END)
+    entry3.set_activate_event(True)
     entry3.insert(tkinter.END, "描画中...")
 
 def process4(event):
     time.sleep(5)
     button["state"] = tkinter.NORMAL
+    entry3.set_activate_event(False)
     entry3.delete(0, tkinter.END)
     entry3.insert(tkinter.END, "描画終了")
+    entry3.set_activate_event(True)
 
 # ウィンドウ
 window.geometry(window_geometory)
