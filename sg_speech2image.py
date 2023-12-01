@@ -1,4 +1,4 @@
-import PySimbleGUI as sg
+import pysimblegui as sg
 
 sg.theme('white')
 layout = [ 
