@@ -12,11 +12,13 @@ def process():
 
 def get_image_from_file(image_file, first=False):
     img = Image.open(image_file)
-    img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
+    #img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
+    img.thumbnail((canvas_width, canvas_height))
     if first:
         bio = io.BytesIO()
         img.save(bio, format='PNG')
-        return img
+        del img
+        return bio.getvalue()
     return ImageTk.PhotoImage(img)
 
 blank_image = './blank.png'
