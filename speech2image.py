@@ -8,7 +8,7 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 
-class ModifiedEntry(tk.Entry):
+class ModifiedEntry(tkinter.Entry):
     def __init__(self, *args, **kwargs):
         tk.Entry.__init__(self, *args, **kwargs)
         self.sv = tk.StringVar()
