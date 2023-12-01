@@ -5,7 +5,7 @@ import io
 canvas_width=640
 canvas_height=640
 
-sg.theme('White')
+sg.theme('LightGrey')
 
 def process():
     pass
