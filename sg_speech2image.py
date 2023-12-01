@@ -129,9 +129,10 @@ while True:
         if asr_result == '':
             asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
         asr_result_elem.update(asr_result)
-        window['start_asr'].update(disabled=False)
         window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
     elif event == 'complete_stable_diffusion':
-        pass
+        image_elem.update(data=get_image_from_file(generate_file), first=True)
+        asr_progress_elem.update('画像生成終了')
+        window['start_asr'].update(disabled=False)
 
 window.close()
