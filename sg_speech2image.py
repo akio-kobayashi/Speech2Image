@@ -72,6 +72,15 @@ canvas_height=1280
 
 sg.theme('LightGrey')
 
+def speech_analysis():
+    y, sr = torchaudio.load(audio_file)
+    plt.figure(figsize=(16,6))
+    plt.plot(y.numpy(), linewidth=1)
+    plt.savefig('wave.png')
+    # spectrogram
+    plt.specgram(y.numpy())
+    plt.savefig('spec.png')
+
 def get_image_from_file(image_file, width=canvas_width, height=canvas_height, first=False):
     img = Image.open(image_file)
     #img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
@@ -135,17 +144,12 @@ while True:
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
         asr_progress_elem.update('録音終了')
-        # waveform
-        y, sr = torchaudio.load(audio_file)
-        plt.figure(figsize=(16,6))
-        plt.plot(y.numpy(), linewidth=1)
-        plt.savefig('wave.png')
+        window.perform_long_operation(lambda:speech_analysis(), end_key="complete_analysis")
+        asr_progress_elem.update('音声分析中')
+    elif event == 'complete_analysis':    
         wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
-        # spectrogram
-        plt.specgram(y.numpy())
-        plt.savefig('spec.png')
         spectrogram_elem.update(data=get_image_from_file('spec.png', height=320, first=True))
-
+        asr_progress_elem.update('音声認識中')
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
