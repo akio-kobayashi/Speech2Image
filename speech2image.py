@@ -63,9 +63,10 @@ def draw_image():
 def record_audio():
     _execute_shell_command(command, second)
 
-def process():
+def process(event):
     pass
 
+# ウィンドウ
 window = tkinter.Tk()
 window.geometry(window_geometory)
 window.title("Stable Diffusion w/ Whisper in Japanese")
@@ -73,21 +74,31 @@ window.title("Stable Diffusion w/ Whisper in Japanese")
 # 音声認識ボタン
 button = tkinter.Button(text=u'音声認識', width=200)
 button.bind("<Button-1>", process)
-button.pack()
+button.pack(pady=10)
 
 # 進行状況
 entry1 = tkinter.Entry(width=200)
-entry1.pack()
+entry1.pack(pady=10)
 entry1.delete(0, tkinter.END)
 entry1.insert(tkinter.END, f"パソコンのマイクに向かって{second}秒話してください...")
 
-# 描画ウィンドウ
+# 音声認識結果
+label2 = tkinter.Label(window, text='音声認識結果')
+label2.pack(pady=10)
+entry2 = tkinter.Entry(width=200)
+entry2.pack(pady=10)
+entry2.delete(0, tkinter.END)
+#entry2.insert(tkinter.END, f"パソコンのマイクに向かって{second}秒話してください...")
+
+# 描画キャンバス
+label3 = tkinter.Label(window, text='描画結果')
+label3.pack(pady=10)
 canvas = tkinter.Canvas(window, bg="#fff", height=canvas_height, width=canvas_width)
-canvas.pack()
+canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
-pipeline = prepare_pipeline()
-model = prepare_whisper()
+#pipeline = prepare_pipeline()
+#model = prepare_whisper()
 
 window.mainloop()
 
