@@ -8,7 +8,7 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 import librosa
-import matplotlib as plt
+import matplotlib.plot as plt
 
 # configuration
 model_id="stabilityai/japanese-stable-diffusion-xl"
