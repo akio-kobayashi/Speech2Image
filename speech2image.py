@@ -118,19 +118,19 @@ button.pack(pady=10)
 # 進行状況
 entry1.pack(pady=10)
 entry1.delete(0, tkinter.END)
-entry1.bind("<<TextModified>>", process2, '+')
+entry1.bind("<<TextModified>>", process2)
 
 # 音声認識結果
 label2.pack(pady=10)
 entry2.pack(pady=10)
 entry2.delete(0, tkinter.END)
-entry2.bind("<<TextModified>>", process3, '+')
+entry2.bind("<<TextModified>>", process3)
 
 # 描画キャンバス
 label3.pack(pady=10)
 entry3.pack(pady=10)
 entry3.delete(0, tkinter.END)
-entry3.bind("<<TextModified>>", process4, '+')
+entry3.bind("<<TextModified>>", process4)
 canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
