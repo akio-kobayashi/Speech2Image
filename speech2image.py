@@ -74,24 +74,21 @@ def record_audio():
 
 def process1(event):
     entry1.delete(0, tkinter.END)
-    entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
     button["state"] = tkinter.DISABLED
-    window.event_generate("<<RecordEndEvent>>")
-
+    entry1.insert(tkinter.END, "パソコンのマイクに向かって5秒話してください...")
 
 def process2(event):
     record_audio()
     entry1.delete(0, tkinter.END)
     entry1.insert(tkinter.END, "録音終了")
-    window.event_generate("<<DiffusionStartEvent>>")
 
 def process3(event):
     entry3.delete(0, tkinter.END)
     entry3.insert(tkinter.END, "描画中...")
-    time.sleep(5)
-    button["state"] = tkinter.NORMAL
 
 def process4(event):
+    time.sleep(5)
+    button["state"] = tkinter.NORMAL
     entry3.delete(0, tkinter.END)
     entry3.insert(tkinter.END, "描画終了")
 
@@ -102,28 +99,24 @@ window.configure(bg="white")
 
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
-window.event_add("<<RecordEndEvent>>", "<Button-1>")
-window.event_add("<<DiffusionStartEvent>>", "<ButtonRelease>")
-#window.event_add("<<DiffusionEndEvent>>", "<Button-1>")
-button.bind("<<RecordEndEvent>>", process2, '+')
-button.bind("<<DiffusionStartEvent>>", process3, '+')
-#button.bind("<<DiffusionEndEvent>>", process4, '+')
-
 button.pack(pady=10)
 
 # 進行状況
 entry1.pack(pady=10)
 entry1.delete(0, tkinter.END)
-entry1.bind("<Key>", process4)
+entry1.bind("<Key>", process2)
+
 # 音声認識結果
 label2.pack(pady=10)
 entry2.pack(pady=10)
 entry2.delete(0, tkinter.END)
+entry2.bind("<Key>", process3)
 
 # 描画キャンバス
 label3.pack(pady=10)
 entry3.pack(pady=10)
 entry3.delete(0, tkinter.END)
+entry3.bind("<Key>", process4)
 canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
