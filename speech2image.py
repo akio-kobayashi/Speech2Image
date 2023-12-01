@@ -99,24 +99,24 @@ window.configure(bg="white")
 
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
+button.bind("<Button-1>", process2, '+')
+button.bind("<Button-1>", process3, '+')
+button.bind("<Button-1>", process4, '+')
 button.pack(pady=10)
 
 # 進行状況
 entry1.pack(pady=10)
 entry1.delete(0, tkinter.END)
-entry1.bind("<Key>", process2)
 
 # 音声認識結果
 label2.pack(pady=10)
 entry2.pack(pady=10)
 entry2.delete(0, tkinter.END)
-entry2.bind("<Key>", process3)
 
 # 描画キャンバス
 label3.pack(pady=10)
 entry3.pack(pady=10)
 entry3.delete(0, tkinter.END)
-entry3.bind("<Key>", process4)
 canvas.pack(pady=10)
 #canvas.place(x=0, y=0)
 
