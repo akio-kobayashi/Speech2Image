@@ -8,6 +8,20 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 
+class ModifiedEntry(tk.Entry):
+    def __init__(self, *args, **kwargs):
+        tk.Entry.__init__(self, *args, **kwargs)
+        self.sv = tk.StringVar()
+        self.sv.trace('w',self.var_changed)
+        self.configure(textvariable = self.sv)
+
+    # argsにはtrace発生元のVarの_nameが入っている
+    # argsのnameと内包StringVarの_nameが一致したらイベントを発生させる。
+    def var_changed(self, *args):
+        if args[0] == self.sv._name:
+            s = self.sv.get() 
+            self.event_generate("<<TextModified>>")
+
 window_geometory="1024x768"
 canvas_width=640
 canvas_height=480
@@ -21,11 +35,11 @@ command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack
 # ウィジェットパーツ
 window = tkinter.Tk()
 button = tkinter.Button(text=u'音声認識', width=100, font=("Helvetica", 24),bg="RosyBrown1" )
-entry1 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
+entry1 = ModifiedEntry(width=200, font=("Helvetica", 24), bg="white" )
 label2 = tkinter.Label(window, text='音声認識結果', font=("Helvetica", 24), bg="white" )
-entry2 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
+entry2 = ModifiedEntry(width=200, font=("Helvetica", 24), bg="white" )
 label3 = tkinter.Label(window, text='Stable Diffusion', font=("Helvetica", 24), bg="white" )
-entry3 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white")
+entry3 = ModifiedEntry(width=200, font=("Helvetica", 24), bg="white")
 canvas = tkinter.Canvas(window, bg="white", height=canvas_height, width=canvas_width)
 
 def _execute_shell_command(
@@ -99,9 +113,9 @@ window.configure(bg="white")
 
 # 音声認識ボタン
 button.bind("<Button-1>", process1)
-button.bind("<Button-1>", process2, '+')
-button.bind("<Button-1>", process3, '+')
-button.bind("<Button-1>", process4, '+')
+button.bind("<<TextModified>>", process2, '+')
+button.bind("<<TextModified>>", process3, '+')
+button.bind("<<TextModified>>", process4, '+')
 button.pack(pady=10)
 
 # 進行状況
