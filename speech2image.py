@@ -21,10 +21,10 @@ command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack
 # ウィジェットパーツ
 window = tkinter.Tk()
 button = tkinter.Button(text=u'音声認識', width=100, font=("Helvetica", 24),bg="RosyBrown1" )
-entry1 = tkinter.Entry(width=200, font=("Helvetica", 24) )
-label2 = tkinter.Label(window, text='音声認識結果', font=("Helvetica", 24) )
-entry2 = tkinter.Entry(width=200, font=("Helvetica", 24) )
-label3 = tkinter.Label(window, text='描画結果', font=("Helvetica", 24) )
+entry1 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
+label2 = tkinter.Label(window, text='音声認識結果', font=("Helvetica", 24), bg="white" )
+entry2 = tkinter.Entry(width=200, font=("Helvetica", 24), bg="white" )
+label3 = tkinter.Label(window, text='描画結果', font=("Helvetica", 24), bg="white" )
 canvas = tkinter.Canvas(window, bg="white", height=canvas_height, width=canvas_width)
 
 def _execute_shell_command(
