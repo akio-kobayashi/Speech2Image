@@ -5,6 +5,7 @@ import wave, subprocess
 import torch
 from diffusers import DiffusionPipeline
 import xformers
+import whisper
 
 window_geometory="1024x768"
 canvas_width=640
