@@ -12,6 +12,20 @@ canvas_height=480
 model_id="stabilityai/japanese-stable-diffusion-xl"
 whisper_model="large"
 
+def prepare_pipeline():
+    pipeline=DiffusionPipeline.from_pretrained(
+        model_id,
+        torch_dtype=torch.float16,
+        use_safetensors=True,
+        variant="fp16",
+        trust_remote_code=True
+    ).to("cuda")
+    return pipeline
+
+def prepare_whisper():
+    model = whisper.load_model(whisper_model).to("cpu")
+    return model
+
 window = tkinter.Tk()
 window.geometry(window_geometory)
 window.title("Stable Diffusion w/ Whisper in Japanese")
@@ -30,16 +44,3 @@ def draw_image():
     img = ImageTk.PhotoImage(img)
     canvas.create_image(0, 0, image=img, anchor=tkinter.NW)
 
-def prepare_pipeline():
-    pipeline=DiffusionPipeline.from_pretrained(
-        model_id,
-        torch_dtype=torch.float16,
-        use_safetensors=True,
-        variant="fp16",
-        trust_remote_code=True
-    ).to("cuda")
-    return pipeline
-
-def prepare_whisper():
-    model = whisper.load_model(whisper_model).to("cpu")
-    return model
