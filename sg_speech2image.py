@@ -7,7 +7,7 @@ layout = [
     [sg.Listbox(values=sg.theme_list(), size=(20, 12), key='-LIST-', enable_events=True)],
     [sg.Button('Exit')]
 ]
-window = sg.Window('Theme Browser', layour)
+window = sg.Window('Theme Browser', layout)
 
 while True:
     event, values = window.read()
