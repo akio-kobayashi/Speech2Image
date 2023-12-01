@@ -72,7 +72,7 @@ window.geometry(window_geometory)
 window.title("Stable Diffusion w/ Whisper in Japanese")
 
 # 音声認識ボタン
-button = tkinter.Button(text=u'音声認識', width=100, height=50, font=("Helvetica", 24),bg="RosyBrown1" )
+button = tkinter.Button(text=u'音声認識', width=100, font=("Helvetica", 24),bg="RosyBrown1" )
 button.bind("<Button-1>", process)
 button.pack(pady=10)
 
