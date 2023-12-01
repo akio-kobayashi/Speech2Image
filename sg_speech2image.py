@@ -96,8 +96,8 @@ blank_image = './blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
 asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 24))
-wave_elem = sg.Image(data=get_image_from_file(blank_image, height=640, first=True))
-spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=640, first=True))
+wave_elem = sg.Image(data=get_image_from_file(blank_image, height=480, first=True))
+spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=480, first=True))
 
 frame1 = sg.Frame(
     '', 
@@ -148,8 +148,8 @@ while True:
         window.perform_long_operation(lambda:speech_analysis(), end_key="complete_analysis")
         asr_progress_elem.update('音声分析中...')
     elif event == 'complete_analysis':    
-        wave_elem.update(data=get_image_from_file('wave.png', height=320, first=True))
-        spectrogram_elem.update(data=get_image_from_file('spec.png', height=320, first=True))
+        wave_elem.update(data=get_image_from_file('wave.png', height=480, first=True))
+        spectrogram_elem.update(data=get_image_from_file('spec.png', height=480, first=True))
         asr_progress_elem.update('音声認識中...')
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
