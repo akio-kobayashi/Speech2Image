@@ -62,7 +62,7 @@ def asr(model):
 def stable_diffusion():
     image = pipeline(asr_result).images[0]
     image.save(generate_file)
-    
+
 model = prepare_whisper()
 pipeline = prepare_pipeline()
 
@@ -126,8 +126,8 @@ while True:
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
-        if audio_result == '':
-            audio_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
+        if asr_result == '':
+            asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
         asr_result_elem.update(asr_result)
         window['start_asr'].update(disabled=False)
         window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
