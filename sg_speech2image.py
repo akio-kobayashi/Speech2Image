@@ -19,13 +19,13 @@ def get_image_from_file(image_file, first=False):
         return img
     return ImageTk.PhotoImage(img)
 
-blank_image = 'blank.png'
+blank_image = './blank.png'
 image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
 
 frame1 = sg.Frame(
     '', 
     [
-        [ sg.Submit(button_text='OCR開始', font=('Helvetica',24),size=(8,3),key='process') ]
+        [ sg.Submit(button_text='音声認識', font=('Helvetica',24),size=(8,3),key='process') ]
     ]
     , size=(640, 320)
 )
