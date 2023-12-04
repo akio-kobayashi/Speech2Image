@@ -176,7 +176,7 @@ while True:
         asr_progress_elem.update('音声認識終了')
         #if asr_result == '':
         #    asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
-        asr_result = values[0]
+        asr_result = values
         asr_result_elem.update(asr_result)
         asr_progress_elem.update('画像生成中...')
         window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
