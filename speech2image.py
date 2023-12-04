@@ -77,9 +77,10 @@ def record_audio():
 def asr(model):
     result = model.transcribe(audio_file, language='ja')
     asr_result=result['text']
-    print(asr_result)
-        
+    return asr_result
+
 def stable_diffusion():
+    print(asr_result)
     image = pipeline(asr_result).images[0]
     image.save(generate_file)
 
