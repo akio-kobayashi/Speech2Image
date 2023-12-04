@@ -8,6 +8,8 @@ import xformers
 import whisper
 import os, time, ffmpeg, numpy
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('agg')
 
 # configuration
 model_id="stabilityai/japanese-stable-diffusion-xl"
@@ -15,7 +17,8 @@ whisper_model="large"
 generate_file="test.png"
 audio_file="audio.wav"
 second=5
-command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack_Solo-00.analog-stereo', 'audio.wav']
+rec_command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack_Solo-00.analog-stereo', 'audio.wav']
+#rec_command = ['parecord', 'audio.wav']
 asr_result=""
 
 def _execute_shell_command(
@@ -24,8 +27,9 @@ def _execute_shell_command(
     # Debug
     verbose= False,
 ):
+     
      with subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT  # Example ['ls ','l']
+               command, stdout=subprocess.PIPE, shell=False, stderr=subprocess.STDOUT  # Example ['ls ','l']
     ) as terminal_subprocess:
         # Execute command depending or not in timeout
         try:
@@ -38,7 +42,14 @@ def _execute_shell_command(
             stdout, stderr = terminal_subprocess.communicate()
 
         return stdout, stderr
-
+     
+     '''
+     print(command)
+     command.insert(0, str(timeout))
+     command.insert(0, 'timeout')
+     subprocess.run(command, timeout)
+     '''
+     
 def prepare_pipeline():
     pipeline=DiffusionPipeline.from_pretrained(
         model_id,
@@ -54,12 +65,12 @@ def prepare_whisper():
     return model
 
 def record_audio():
-    _execute_shell_command(command, second)
+    _execute_shell_command(rec_command, second)
 
 def asr(model):
     result = model.transcribe(audio_file, language='ja')
-    asr_result=list(result['text'])    
-
+    asr_result=result['text']
+    
 def stable_diffusion():
     image = pipeline(asr_result).images[0]
     image.save(generate_file)
@@ -156,8 +167,8 @@ while True:
         spectrogram_elem.update(data=get_image_from_file('spec.png', height=480, first=True))
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
-        if asr_result == '':
-            asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
+        #if asr_result == '':
+        #    asr_result=u'青い馬に乗った宇宙飛行士が砂漠を行くリアルな画像'
         asr_result_elem.update(asr_result)
         asr_progress_elem.update('画像生成中...')
         window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
