@@ -6,10 +6,11 @@ import torch, torchaudio
 from diffusers import DiffusionPipeline
 import xformers
 import whisper
-import os, time, ffmpeg, numpy
+import os, time, ffmpeg
+import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('agg')
+import matplotlib as mpl
+mpl.use('agg')
 
 # configuration
 model_id="stabilityai/japanese-stable-diffusion-xl"
@@ -20,6 +21,19 @@ second=5
 rec_command = ['parecord', '--channels=1', '--device=alsa_input.usb-Focusrite_iTrack_Solo-00.analog-stereo', 'audio.wav']
 #rec_command = ['parecord', 'audio.wav']
 asr_result=""
+
+def make_waveform_pyplot(y, sr):
+  totaltime = len(y)/sr
+  time_array = np.arange(0, totaltime, 1/sr)
+  mpl.rcParams['agg.path.chunksize'] = 100000
+  fig, ax = plt.subplots()
+  formatter = mpl.ticker.FuncFormatter(lambda s, x: time.strftime('%M:%S', time.gmtime(s)))
+  ax.xaxis.set_major_formatter(formatter)
+  ax.set_xlim(0, totaltime)
+  ax.set_xlabel("Time")
+  ax.plot(time_array, y)
+  plt.show()
+  plt.savefig('wave.png')
 
 def _execute_shell_command(
     command,
@@ -85,11 +99,9 @@ sg.theme('LightGrey')
 
 def speech_analysis():
     y, sr = torchaudio.load(audio_file)
-    plt.figure(figsize=(16,6))
-    plt.plot(y.numpy(), linewidth=1)
-    plt.savefig('wave.png')
+    make_waveform_pyplot(y.squeeze().numpy(), sr)
     # spectrogram
-    plt.specgram(y.numpy())
+    plt.specgram(y.squeeze().numpy(), Fs=sr)
     plt.savefig('spec.png')
 
 def get_image_from_file(image_file, width=canvas_width, height=canvas_height, first=False):
