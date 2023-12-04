@@ -56,14 +56,7 @@ def _execute_shell_command(
             stdout, stderr = terminal_subprocess.communicate()
 
         return stdout, stderr
-     
-     '''
-     print(command)
-     command.insert(0, str(timeout))
-     command.insert(0, 'timeout')
-     subprocess.run(command, timeout)
-     '''
-     
+      
 def prepare_pipeline():
     pipeline=DiffusionPipeline.from_pretrained(
         model_id,
@@ -154,7 +147,7 @@ layout = [
     [frame1],
     [frame2, frame3]
 ]
-window = sg.Window('サンプル', layout, resizable=True)
+window = sg.Window('Japanese Stable Diffusion w/ OpenAI Whisper', layout, resizable=True)
 
 while True:
     event, values = window.read()
