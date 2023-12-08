@@ -26,11 +26,11 @@ def make_waveform_pyplot(y, sr):
   totaltime = len(y)/sr
   time_array = np.arange(0, totaltime, 1/sr)
   mpl.rcParams['agg.path.chunksize'] = 100000
-  fig, ax = plt.subplots()
+  fig, ax = plt.subplots(figsize=(27,9))
   formatter = mpl.ticker.FuncFormatter(lambda s, x: time.strftime('%M:%S', time.gmtime(s)))
   ax.xaxis.set_major_formatter(formatter)
   ax.set_xlim(0, totaltime)
-  ax.set_xlabel("Time")
+  #ax.set_xlabel("Time")
   ax.plot(time_array, y)
   plt.show()
   plt.savefig('wave.png')
@@ -87,8 +87,10 @@ def stable_diffusion():
 model = prepare_whisper()
 pipeline = prepare_pipeline()
 
-canvas_width=1280
-canvas_height=1280
+#canvas_width=1280
+canvas_width=960
+#canvas_height=1280
+canvas_height=960
 
 sg.theme('LightGrey')
 
@@ -101,7 +103,6 @@ def speech_analysis():
 
 def get_image_from_file(image_file, width=canvas_width, height=canvas_height, first=False):
     img = Image.open(image_file)
-    #img = img.resize(( int(img.width * (canvas_width/img.width)), int(img.height * (canvas_height/img.width)) ))
     img.thumbnail((width, height))
     if first:
         bio = io.BytesIO()
@@ -111,24 +112,24 @@ def get_image_from_file(image_file, width=canvas_width, height=canvas_height, fi
     return ImageTk.PhotoImage(img)
 
 blank_image = './blank.png'
-image_elem = sg.Image(data=get_image_from_file(blank_image, first=True))
-asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 24))
-asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 24))
-wave_elem = sg.Image(data=get_image_from_file(blank_image, height=480, first=True))
-spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, height=480, first=True))
+image_elem = sg.Image(data=get_image_from_file(blank_image, width=640, height=640, first=True))
+asr_progress_elem = sg.Text('', key='text1', font=('Helvetica', 18))
+asr_result_elem = sg.Text('', key='text2', font=('Helvetica', 18))
+wave_elem = sg.Image(data=get_image_from_file(blank_image, width=720, height=320, first=True))
+spectrogram_elem = sg.Image(data=get_image_from_file(blank_image, width=720, height=320, first=True))
 
 frame1 = sg.Frame(
     '', 
     [
-        [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',24), size=(8,3), key='start_asr'), asr_progress_elem ],
-        [ sg.Text('音声認識結果: ', font=('Helvetica', 24)), asr_result_elem]
+        [ sg.Button(button_text='音声認識', button_color=('#000', '#fcc'), font=('Helvetica',18), size=(8,3), key='start_asr'), asr_progress_elem ],
+        [ sg.Text('音声認識結果: ', font=('Helvetica', 18), pad=((10,10),(10,10))), asr_result_elem]
     ]
     , size=(2560, 320)
 )
 frame2 = sg.Frame(
     '',
     [ 
-        [ sg.Text('生成画像', font=('Helvetica', 24))],
+        [ sg.Text('生成画像', font=('Helvetica', 18), pad=((10,10),(10,10)))],
         [ image_elem ], 
     ],
     size=(canvas_width, canvas_height)
@@ -137,9 +138,9 @@ frame2 = sg.Frame(
 frame3 = sg.Frame(
     '',
     [
-        [sg.Text('音声波形', font=('Helvetica, 24'))],
+        [sg.Text('音声波形', font=('Helvetica', 18), pad=((10,10),(10,10)) )],
         [ wave_elem ],
-        [ sg.Text('スペクトログラム（声紋）', font=('Helvetica', 24)) ],
+        [ sg.Text('スペクトログラム（声紋）', font=('Helvetica', 18), pad=((10,10),(10,10)) ) ],
         [ spectrogram_elem ]        
     ],
     size=(canvas_width, canvas_height)
@@ -159,9 +160,9 @@ while True:
     elif event == 'start_asr':
         window['start_asr'].update(disabled=True)
         asr_result_elem.update('')
-        wave_elem.update(data=get_image_from_file(blank_image, height=480, first=True))
-        spectrogram_elem.update(data=get_image_from_file(blank_image, height=480, first=True))
-        image_elem.update(data=get_image_from_file(blank_image, first=True))
+        wave_elem.update(data=get_image_from_file(blank_image, width=720, height=320, first=True))
+        spectrogram_elem.update(data=get_image_from_file(blank_image, width=720, height=320, first=True))
+        image_elem.update(data=get_image_from_file(blank_image, width=640, height=640, first=True))
         asr_progress_elem.update('パソコンのマイクに向かって5秒話してください...')
         window.perform_long_operation(lambda:record_audio(), end_key="complete_record")
     elif event == 'complete_record':
@@ -170,8 +171,8 @@ while True:
         window.perform_long_operation(lambda:asr(model), end_key="complete_asr")
         asr_progress_elem.update('音声認識中...')
     elif event == 'complete_analysis':    
-        wave_elem.update(data=get_image_from_file('wave.png', height=480, first=True))
-        spectrogram_elem.update(data=get_image_from_file('spec.png', height=480, first=True))
+        wave_elem.update(data=get_image_from_file('wave.png', width=720, height=320, first=True))
+        spectrogram_elem.update(data=get_image_from_file('spec.png', width=720, height=320, first=True))
     elif event == 'complete_asr':
         asr_progress_elem.update('音声認識終了')
         #if asr_result == '':
@@ -181,7 +182,7 @@ while True:
         asr_progress_elem.update('画像生成中...')
         window.perform_long_operation(lambda:stable_diffusion(), end_key='complete_stable_diffusion')
     elif event == 'complete_stable_diffusion':
-        image_elem.update(data=get_image_from_file(generate_file, first=True))
+        image_elem.update(data=get_image_from_file(generate_file, width=640, height=640, first=True))
         asr_progress_elem.update('画像生成終了')
         window['start_asr'].update(disabled=False)
 
